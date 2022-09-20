@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-mongoose.connect('mongodb://localhost/authentication', 
+mongoose.connect('mongodb://localhost/authenticationjwt', 
   {useUnifiedTopology: true}, (err) => {
     console.log(err ? err : "connected");
   });
