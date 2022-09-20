@@ -26,7 +26,7 @@ router.post('/login', async function(req, res, next) {
     res.status(400).json({error: "email/password required"})
   }
   try {
-    var user = await User.find({email})
+    var user = await User.findOne({email})
     console.log(user)
     if(!user){
       res.status(400).json({error: "email not registered"})
