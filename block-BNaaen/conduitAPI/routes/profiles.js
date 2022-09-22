@@ -4,7 +4,7 @@ var auth = require('../middlewares/auth');
 var User = require('../models/user')
 
 /* GET home page. */
-router.get('/:username', auth.verifyToken, auth.verifyFollowing, async function(req, res, next) {
+router.get('/:username', auth.optional, auth.verifyFollowing, async function(req, res, next) {
   var username = req.params.username;
   try {
     var user = await User.findOne({username: username});
@@ -27,7 +27,7 @@ router.post('/:username/follow', auth.verifyToken, auth.verifyFollowing, async (
         if(user){
             res.status(200).json({warning: 'already followed/no user'})
         }else{
-            var user = await User.findOneAndUpdate({username}, {$push: {followers: req.user.id}});
+            var user = await User.findOneAndUpdate({username}, {$push: {followers: req.user.id}}, {new:true});
             var sendUser = await user.profile(req.following)
             res.status(200).json({profile: sendUser})
         }
@@ -45,7 +45,7 @@ router.delete('/:username/follow', auth.verifyToken, auth.verifyFollowing, async
         if(!user){
             res.status(200).json({warning: 'already unfollowed/no user'})
         }else{
-            var user = await User.findOneAndUpdate({username}, {$pull: {followers: req.user.id}});
+            var user = await User.findOneAndUpdate({username}, {$pull: {followers: req.user.id}}, {new:true});
             var sendUser = await user.profile(req.following)
             res.status(200).json({profile: sendUser})
         }

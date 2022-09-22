@@ -4,7 +4,7 @@ var Article = require('../models/article');
 
 /* GET home page. */
 router.get('/tags', function(req, res, next) {
-  Article.distinct('tags').exec((err, tags) => {
+  Article.distinct('taglist').exec((err, tags) => {
     res.status(200).json({tags: tags})
   });
 });
