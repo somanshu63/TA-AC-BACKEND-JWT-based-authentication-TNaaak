@@ -6,10 +6,11 @@ const User = require('../models/user');
 var Comment = require('../models/comment')
 
 //get articles
-router.get('/', auth.verifyToken, auth.verifyFavorite, auth.verifyFollowing, function(req, res, next) {
+router.get('/', auth.optional, auth.verifyFavorite, auth.verifyFollowing, function(req, res, next) {
     var {tag, author, favorited, limit, offset} = req.query;
     var lim, skip;
     var query = {}
+    var array =[];
 
     if(tag){
         query.tag = tag;
@@ -40,19 +41,24 @@ router.get('/', auth.verifyToken, auth.verifyFavorite, auth.verifyFollowing, fun
     .skip(skip)
     .exec((err, articles) => {
         if(err) return next(err);
-            // var user = articles.author.profile(req.following);
-            // articles = articles.articleJSON(req.favorited, user);
-        res.status(200).json({articles: articles});
+        async function data(){
+            for (let i = 0; i < articles.length; i++) {
+                var user = await articles[i].author.profile(req.following);
+                array[i] = await articles[i].articleJSON(req.favorited, user);
+                if(i == articles.length - 1){
+                    res.status(200).json({articles: array})
+                }
+            }
+        }
+        data();
     });    
 });
 
-//get articles
-router.get('/feed', auth.verifyToken, auth.verifyFavorite, auth.verifyFollowing, function(req, res, next) {
-    var {tag, author, favorited, limit, offset} = req.query;
+//feed articles
+router.get('/feed', auth.verifyToken, auth.verifyFavorite, auth.verifyFollowing, async function(req, res, next) {
+    var {limit, offset} = req.query;
     var lim, skip;
-    var query = {}
-
-    query.author = req.user.email;
+    var array = [];
 
     if(limit){
         lim = limit
@@ -66,16 +72,25 @@ router.get('/feed', auth.verifyToken, auth.verifyFavorite, auth.verifyFollowing,
         skip = 0;
     }
 
-    Article.find(query)
+    var users = await User.find({followers: req.user.id})
+
+    Article.find({author: {$in: users}})
     .populate('author')
     .sort({createdAt: 1})
     .limit(lim)
     .skip(skip)
     .exec((err, articles) => {
         if(err) return next(err);
-            // var user = articles.author.profile(req.following);
-            // articles = articles.articleJSON(req.favorited, user);
-        res.status(200).json({articles: articles});
+        async function data(){
+            for (let i = 0; i < articles.length; i++) {
+                var user = await articles[i].author.profile(req.following);
+                array[i] = await articles[i].articleJSON(req.favorited, user);
+                if(i == articles.length - 1){
+                    res.status(200).json({articles: array})
+                }
+            }
+        }
+        data();
     });    
 });
 
@@ -162,13 +177,22 @@ router.post('/:slug/comments', auth.verifyToken, auth.verifyFollowing, async (re
 });
 
 //get comments from an article
-router.get('/:slug/comments', auth.verifyToken, auth.verifyFollowing, async function(req, res, next) {
+router.get('/:slug/comments', auth.optional, auth.verifyFollowing, async function(req, res, next) {
     var slug = req.params.slug;
+    var array = [];
     try {
         var article = await Article.findOne({slug: slug});
         var comments = await Comment.find({article: article.id}).populate('author');
-        //comments.forEach error for author description same as list of articles
-        res.status(200).json({comments: comments})
+        async function data(){
+            for (let i = 0; i < comments.length; i++) {
+                var profile = await comments[i].author.profile(req.following);
+                array[i] = await comments[i].commentJSON(profile)
+                if(i == comments.length - 1){
+                    res.status(200).json({comments: array})
+                }
+            }
+        }
+        data();
     } catch (error) {
         
     }
