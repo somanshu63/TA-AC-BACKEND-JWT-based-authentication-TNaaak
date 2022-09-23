@@ -44,12 +44,12 @@ userSchema.methods.userJSON = async function(token){
     }
 }
 
-userSchema.methods.profile = async function(value){
+userSchema.methods.profile = async function(currentUser){
     return {
         username: this.username,
         bio: this.bio,
         image: this.image,
-        following: value
+        following: this.followers.includes(currentUser && currentUser.id)
     }
 }
 

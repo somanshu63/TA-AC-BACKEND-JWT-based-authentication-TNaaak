@@ -21,7 +21,7 @@ articleSchema.pre('save', async function(next){
     next();
 });
 
-articleSchema.methods.articleJSON = async function(value, profile){
+articleSchema.methods.articleJSON = async function(currentUser){
     return {
         article: {
             slug: this.slug,
@@ -31,9 +31,9 @@ articleSchema.methods.articleJSON = async function(value, profile){
             taglist: this.taglist,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
-            favorited: value,
+            favorited: this.favorites.includes(currentUser.id),
             favoritesCount: this.favorites.length,
-            author: profile
+            author: await this.author.profile(currentUser)
         }
     }
 }

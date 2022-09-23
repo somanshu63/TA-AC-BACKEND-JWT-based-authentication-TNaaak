@@ -22,7 +22,7 @@ router.get('/', auth.verifyToken, async function(req, res, next) {
 //update user
 router.put('/', auth.verifyToken, async (req, res, next) => {
     try {
-        var user = await User.findOneAndUpdate({email: req.body.user.email}, req.body.user);
+        var user = await User.findOneAndUpdate({email: req.body.user.email}, req.body.user, {new: true});
         if(!user){
             res.status(400).json({error: 'no user by that email'})
         }
