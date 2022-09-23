@@ -33,33 +33,5 @@ module.exports = {
             next(error);
         }
     },
-    verifyFollowing: async(req, res, next) => {
-        var profileId = req.params.id;
-        if(req.user){
-            var result = await User.findOne({id: profileId, followers: req.user.id})
-            if(result){
-                req.following = true;
-            }else{
-                req.following = false;
-            }
-        }else{
-            req.following = false;
-        }
-        
-        next();
-    },
-    verifyFavorite: async(req, res, next) => {
-        var articleSlug = req.params.slug;
-        if(req.user){
-            var result = await Article.findOne({slug: articleSlug, favorited: req.user.id})
-            if(result){
-                req.favorited = true;
-            }else{
-                req.favorited = false;
-            }
-        }else{
-            req.favorited = false;
-        }
-        next();
-    }
+    
 }

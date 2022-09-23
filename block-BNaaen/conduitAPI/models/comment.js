@@ -8,13 +8,13 @@ var commentSchema = new Schema({
     article: {type: Schema.Types.ObjectId, ref: 'Article'}
 }, {timestamps: true});
 
-commentSchema.methods.commentJSON = async function(profile){
+commentSchema.methods.commentJSON = async function(currentUser){
     return {
         id: this.id,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         body: this.body,
-        author: profile
+        author: await this.author.profile(currentUser)
     }
 }
 
