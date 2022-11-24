@@ -16,7 +16,7 @@ var userRouter = require("./routes/user");
 
 //connect database
 mongoose.connect(
-  "mongodb://127.0.0.1/conductApi",
+  "mongodb://127.0.0.1:27017/conductApi",
   { useUnifiedTopology: true },
   (err) => {
     console.log(err ? err : "connected to database");
