@@ -16,7 +16,7 @@ var userRouter = require("./routes/user");
 
 //connect database
 mongoose.connect(
-  "mongodb+srv://127.0.0.1/somanshu:Sp92jdGodKb6BoDe@mongodblive.jlfnadr.mongodb.net/?retryWrites=true&w=majority",
+  "mongodb+srv://somanshu:somanshu@cluster0.ydhf3wo.mongodb.net/?retryWrites=true&w=majority",
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err) => {
     console.log(err ? err : "connected to database");
