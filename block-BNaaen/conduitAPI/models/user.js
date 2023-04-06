@@ -42,6 +42,7 @@ userSchema.methods.userJSON = async function (token) {
     username: this.username,
     bio: this.bio || null,
     image: this.image || null,
+    isAdmin: this.isAdmin,
   };
 };
 
@@ -51,6 +52,7 @@ userSchema.methods.profile = async function (currentUser) {
     bio: this.bio,
     image: this.image,
     following: this.followers.includes(currentUser ? currentUser.id : ""),
+    isAdmin: this.isAdmin,
   };
 };
 
