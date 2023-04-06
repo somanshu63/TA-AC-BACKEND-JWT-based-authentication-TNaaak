@@ -31,7 +31,8 @@ router.post('/login', async (req, res, next) => {
   }
   try {
     var token = await user.signToken();
-    var senduser = await user.userJSON(token)
+    var senduser = await user.userJSON(token);
+    console.log(senduser);
     res.status(200).json({user: senduser})
   } catch (error) {
     next(error);
