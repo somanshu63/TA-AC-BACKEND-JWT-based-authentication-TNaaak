@@ -10,6 +10,7 @@ var userSchema = new Schema({
   bio: String,
   image: String,
   followers: [{ type: Schema.Types.ObjectId }],
+  isAdmin: String,
 });
 
 userSchema.pre("save", async function (next) {
